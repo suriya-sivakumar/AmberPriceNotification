@@ -2,12 +2,16 @@ name: Amber Price Monitor
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
-  workflow_dispatch:     
+    - cron: '*/30 * * * *' # Runs every 30 minutes
+  workflow_dispatch:      # Manual trigger
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Added permissions to allow the action to write to the repository
+    permissions:
+      contents: write
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,3 +32,11 @@ jobs:
           SENDER_PASS: ${{ secrets.SENDER_PASS }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
         run: python monitor.py
+
+      - name: Commit and push status change
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add alert_status.txt
+          git commit -m "Update alert status [skip ci]" || exit 0
+          git push
