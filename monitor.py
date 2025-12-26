@@ -19,7 +19,7 @@ def check_and_send():
         
         currents = [i for i in data if i["type"] == "CurrentInterval"]
         buy = next(i["perKwh"] for i in currents if i["channelType"] == "general")
-        sell = next(i["perKwh"] for i in currents if i["channelType"] == "feedIn")
+        sell = next(i["spotPerKwh"] for i in currents if i["channelType"] == "feedIn")
 
         print(f"Prices - Buy: {buy}c, Sell: {sell}c")
 
